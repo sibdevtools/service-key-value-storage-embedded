@@ -14,7 +14,6 @@ import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.val;
-import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -23,7 +22,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@Service
+/**
+ * @author sibmaks
+ * @since 0.0.1
+ */
 public class KeyValueStorageServiceEmbedded implements KeyValueStorageService {
     private final Map<String, Cache<String, CachedValue>> spaces = new ConcurrentHashMap<>();
 

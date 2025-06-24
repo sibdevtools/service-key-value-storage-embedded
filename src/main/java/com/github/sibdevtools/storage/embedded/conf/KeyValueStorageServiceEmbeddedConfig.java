@@ -1,7 +1,10 @@
 package com.github.sibdevtools.storage.embedded.conf;
 
 import com.github.sibdevtools.error.mutable.api.source.ErrorLocalizationsJsonSource;
+import com.github.sibdevtools.session.api.service.KeyValueStorageService;
+import com.github.sibdevtools.storage.embedded.service.KeyValueStorageServiceEmbedded;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -23,5 +26,10 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:/embedded/key-value-storage/application.properties")
 @ConditionalOnProperty(name = "service.key-value-storage.mode", havingValue = "EMBEDDED")
 public class KeyValueStorageServiceEmbeddedConfig {
+
+    @Bean("keyValueStorageServiceEmbedded")
+    public KeyValueStorageService keyValueStorageServiceEmbedded() {
+        return new KeyValueStorageServiceEmbedded();
+    }
 
 }
