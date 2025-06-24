@@ -113,13 +113,17 @@ public class KeyValueStorageServiceEmbedded implements KeyValueStorageService {
                 })
                 .build());
 
-        val cachedValue = cache.get(key, it -> new CachedValue(value, expiredAt));
-        val modified = cachedValue.modify(value);
-        cache.put(key, modified);
+        val result = cache.asMap().compute(key, (k, old) -> {
+            if (old == null || old.isExpired()) {
+                return new CachedValue(value, expiredAt);
+            }
+            if (!Objects.equals(old.value, value)) {
+                return old.modify(value);
+            }
+            return old;
+        });
 
-        val valueMeta = modified.buildValueMeta();
-
-        return new SetValueRs(valueMeta);
+        return new SetValueRs(result.buildValueMeta());
     }
 
     @Nonnull

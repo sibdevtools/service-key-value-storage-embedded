@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -190,4 +192,36 @@ class KeyValueStorageServiceEmbeddedTest {
         assertTrue(service.get(space, key).isEmpty());
         assertFalse(service.getKeys(space).contains(key));
     }
+
+    @Test
+    void testConcurrentSetUpdates() throws InterruptedException {
+        val space = UUID.randomUUID().toString();
+        val key = UUID.randomUUID().toString();
+        val threadCount = 10;
+        val modificationCount = 1000;
+        try (val executor = Executors.newFixedThreadPool(threadCount)) {
+            val latch = new CountDownLatch(modificationCount);
+
+            for (var i = 0; i < modificationCount; i++) {
+                val finalI = i;
+                executor.submit(() -> {
+                    service.set(SetValueRq.builder()
+                            .space(space)
+                            .key(key)
+                            .value("value" + finalI % threadCount)
+                            .expiredAt(ZonedDateTime.now().plusMinutes(1))
+                            .build());
+                    latch.countDown();
+                });
+            }
+
+            latch.await();
+            var finalValue = service.get(space, key)
+                    .orElseThrow()
+                    .getBody()
+                    .getValue();
+            assertTrue(finalValue.toString().startsWith("value"));
+        }
+    }
+
 }
