@@ -1,0 +1,17 @@
+[versions]
+jdk = "21"
+
+spring-dependency-managment = "1.1.7"
+
+# service APIs deps
+common-api = "0.0.2"
+error-api = "0.0.16"
+key-value-storage-api = "0.0.3"
+
+[libraries]
+common-api = { module = "com.github.sibdevtools:api-common", version.ref = "common-api" }
+error-api = { module = "com.github.sibdevtools:api-error", version.ref = "error-api" }
+key-value-storage-api = { module = "com.github.sibdevtools:api-key-value-storage", version.ref = "key-value-storage-api" }
+
+[plugins]
+spring-dependency-managment = { id = "io.spring.dependency-management", version.ref = "spring-dependency-managment" }

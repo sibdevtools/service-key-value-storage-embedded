@@ -1,0 +1,6 @@
+{
+  "UNEXPECTED_ERROR": {
+    "title": "Unexpected error",
+    "message": "Something went wrong, check logs or call support"
+  }
+}
