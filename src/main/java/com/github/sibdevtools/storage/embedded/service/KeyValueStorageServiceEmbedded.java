@@ -120,7 +120,7 @@ public class KeyValueStorageServiceEmbedded implements KeyValueStorageService {
                 return new CachedValue(value, expiredAt);
             }
             if (!Objects.equals(old.value, value)) {
-                return old.modify(value);
+                return old.modify(value, expiredAt);
             }
             return old;
         });
@@ -183,13 +183,13 @@ public class KeyValueStorageServiceEmbedded implements KeyValueStorageService {
             return expiredAt != null && ZonedDateTime.now().isAfter(expiredAt);
         }
 
-        public CachedValue modify(Serializable value) {
+        public CachedValue modify(Serializable value, ZonedDateTime expiredAt) {
             return CachedValue.builder()
                     .value(value)
                     .version(this.version + 1)
                     .createdAt(this.createdAt)
                     .modifiedAt(ZonedDateTime.now())
-                    .expiredAt(this.expiredAt)
+                    .expiredAt(expiredAt)
                     .build();
         }
 
