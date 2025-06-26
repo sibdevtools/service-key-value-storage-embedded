@@ -6,6 +6,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -27,7 +28,7 @@ class KeyValueStorageServiceEmbeddedTest {
     void testSetAndGetValue() {
         val space = UUID.randomUUID().toString();
         val key = UUID.randomUUID().toString();
-        val value = UUID.randomUUID().toString();
+        val value = UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8);
         val expiredAt = ZonedDateTime.now()
                 .plusMinutes(1);
 
@@ -79,7 +80,7 @@ class KeyValueStorageServiceEmbeddedTest {
         service.set(SetValueRq.builder()
                 .space(space1)
                 .key(keyA)
-                .value("valueA")
+                .value("valueA".getBytes(StandardCharsets.UTF_8))
                 .expiredAt(ZonedDateTime.now().plusMinutes(5))
                 .build());
 
@@ -87,7 +88,7 @@ class KeyValueStorageServiceEmbeddedTest {
         service.set(SetValueRq.builder()
                 .space(space2)
                 .key("keyB")
-                .value("valueB")
+                .value("valueB".getBytes(StandardCharsets.UTF_8))
                 .expiredAt(ZonedDateTime.now().plusMinutes(5))
                 .build());
 
@@ -106,7 +107,7 @@ class KeyValueStorageServiceEmbeddedTest {
         service.set(SetValueRq.builder()
                 .space(space)
                 .key(key)
-                .value("value")
+                .value("value".getBytes(StandardCharsets.UTF_8))
                 .expiredAt(ZonedDateTime.now().plusMinutes(1))
                 .build());
 
@@ -116,7 +117,7 @@ class KeyValueStorageServiceEmbeddedTest {
         service.set(SetValueRq.builder()
                 .space(space)
                 .key(key)
-                .value("value")
+                .value("value".getBytes(StandardCharsets.UTF_8))
                 .expiredAt(ZonedDateTime.now().plusMinutes(1))
                 .build());
 
@@ -135,7 +136,7 @@ class KeyValueStorageServiceEmbeddedTest {
         service.set(SetValueRq.builder()
                 .space(space)
                 .key(key)
-                .value("val")
+                .value("val".getBytes(StandardCharsets.UTF_8))
                 .expiredAt(initialExpire)
                 .build());
 
@@ -144,7 +145,7 @@ class KeyValueStorageServiceEmbeddedTest {
 
         val result = service.get(space, key);
         assertTrue(result.isPresent());
-        assertEquals("val", result.get().getBody().getValue());
+        assertArrayEquals("val".getBytes(StandardCharsets.UTF_8), result.get().getBody().getValue());
     }
 
     @Test
@@ -164,7 +165,7 @@ class KeyValueStorageServiceEmbeddedTest {
         service.set(SetValueRq.builder()
                 .space(space)
                 .key(key)
-                .value("will expire")
+                .value("will expire".getBytes(StandardCharsets.UTF_8))
                 .expiredAt(expiredAt)
                 .build());
 
@@ -183,7 +184,7 @@ class KeyValueStorageServiceEmbeddedTest {
         service.set(SetValueRq.builder()
                 .space(space)
                 .key(key)
-                .value("expiring")
+                .value("expiring".getBytes(StandardCharsets.UTF_8))
                 .expiredAt(ZonedDateTime.now().plusSeconds(1))
                 .build());
 
@@ -208,7 +209,7 @@ class KeyValueStorageServiceEmbeddedTest {
                     service.set(SetValueRq.builder()
                             .space(space)
                             .key(key)
-                            .value("value" + finalI % threadCount)
+                            .value(("value" + finalI % threadCount).getBytes(StandardCharsets.UTF_8))
                             .expiredAt(ZonedDateTime.now().plusMinutes(1))
                             .build());
                     latch.countDown();
@@ -220,7 +221,7 @@ class KeyValueStorageServiceEmbeddedTest {
                     .orElseThrow()
                     .getBody()
                     .getValue();
-            assertTrue(finalValue.toString().startsWith("value"));
+            assertTrue(new String(finalValue, StandardCharsets.UTF_8).startsWith("value"));
         }
     }
 

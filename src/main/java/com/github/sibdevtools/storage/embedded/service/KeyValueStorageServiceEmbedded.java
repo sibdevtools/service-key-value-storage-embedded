@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.val;
 
-import java.io.Serializable;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -23,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
+ * Implementation of in-memory key-value storage
+ *
  * @author sibmaks
  * @since 0.0.1
  */
@@ -119,7 +120,7 @@ public class KeyValueStorageServiceEmbedded implements KeyValueStorageService {
             if (old == null || old.isExpired()) {
                 return new CachedValue(value, expiredAt);
             }
-            if (!Objects.equals(old.value, value)) {
+            if (!Arrays.equals(old.value, value)) {
                 return old.modify(value, expiredAt);
             }
             return old;
@@ -165,13 +166,13 @@ public class KeyValueStorageServiceEmbedded implements KeyValueStorageService {
     @Builder
     @AllArgsConstructor
     private static class CachedValue {
-        final Serializable value;
+        final byte[] value;
         final long version;
         final ZonedDateTime createdAt;
         final ZonedDateTime modifiedAt;
         final ZonedDateTime expiredAt;
 
-        CachedValue(Serializable value, ZonedDateTime expiredAt) {
+        CachedValue(byte[] value, ZonedDateTime expiredAt) {
             this.value = value;
             this.version = 0;
             this.createdAt = ZonedDateTime.now();
@@ -183,7 +184,7 @@ public class KeyValueStorageServiceEmbedded implements KeyValueStorageService {
             return expiredAt != null && ZonedDateTime.now().isAfter(expiredAt);
         }
 
-        public CachedValue modify(Serializable value, ZonedDateTime expiredAt) {
+        public CachedValue modify(byte[] value, ZonedDateTime expiredAt) {
             return CachedValue.builder()
                     .value(value)
                     .version(this.version + 1)

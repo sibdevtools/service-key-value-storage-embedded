@@ -6,7 +6,7 @@ spring-dependency-managment = "1.1.7"
 # service APIs deps
 common-api = "0.0.2"
 error-api = "0.0.16"
-key-value-storage-api = "0.0.3"
+key-value-storage-api = "0.0.4"
 
 [libraries]
 common-api = { module = "com.github.sibdevtools:api-common", version.ref = "common-api" }

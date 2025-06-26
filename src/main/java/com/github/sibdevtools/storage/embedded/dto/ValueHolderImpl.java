@@ -13,6 +13,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ValueHolderImpl implements ValueHolder {
-    private Object value;
+    private byte[] value;
     private ValueMetaImpl meta;
 }
