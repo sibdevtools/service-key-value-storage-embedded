@@ -122,6 +122,8 @@ public class KeyValueStorageServiceEmbedded implements KeyValueStorageService {
             }
             if (!Arrays.equals(old.value, value)) {
                 return old.modify(value, expiredAt);
+            } else if (!Objects.equals(old.expiredAt, expiredAt)) {
+                return old.prolongate(expiredAt);
             }
             return old;
         });
